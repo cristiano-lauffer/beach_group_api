@@ -1,6 +1,28 @@
-@BeachGroupAPI_HostAddress = http://localhost:5000
+@base_url = http://localhost:5000
+### @token = 
 
-GET {{BeachGroupAPI_HostAddress}}/weatherforecast/
+### Login
+# @name login
+POST {{base_url}}/api/login
+Content-Type: application/json
+
+{
+  "Email": "usuario2@usuario.com",
+  "senha": "123456"
+}
+
+### Criar usuário
+POST {{base_url}}/api/usuarios
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "Nome": "Usuario 2 Sobrenome 2",
+  "Email": "usuario2@usuario.com",
+  "Senha": "123456"
+}
+
+### Retornar usuários
+GET {{base_url}}/api/usuarios
+Authorization: Bearer {{login.response.body.$.token}}
 Accept: application/json
-
-###
