@@ -26,3 +26,47 @@ Content-Type: application/json
 GET {{base_url}}/api/usuarios
 Authorization: Bearer {{login.response.body.$.token}}
 Accept: application/json
+
+
+### //------------------------------------
+### // Quadras
+### //------------------------------------
+
+### Consultar Quadra
+GET {{base_url}}/api/quadras/1
+Authorization: Bearer {{login.response.body.$.token}}
+Accept: application/json
+
+### Listar Quadras
+GET {{base_url}}/api/quadras
+Authorization: Bearer {{login.response.body.$.token}}
+Accept: application/json
+
+### Criar Quadras
+POST {{base_url}}/api/quadras
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "Nome": "Quadra de Volei 4",
+  "HorFuncionamentoInicio": 23,
+  "HorFuncionamentoFim": 6,
+  "VlrQuadra": 100.12
+}
+
+### Atualizar Quadras
+PUT {{base_url}}/api/quadras/1
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "Nome": "Quadra de Volei 1",
+  "HorFuncionamentoInicio": 23,
+  "HorFuncionamentoFim": 6,
+  "VlrQuadra": 100.12
+}
+
+### Excluir Quadras
+DELETE {{base_url}}/api/quadras/2
+Authorization: Bearer {{login.response.body.$.token}}
+Accept: application/json
