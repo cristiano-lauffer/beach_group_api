@@ -10,5 +10,7 @@
         public DateTime DatCriacao { get; set; }
         public DateTime? DatAlteracao { get; set; }
 
+        public string FlgAdmin{ get; set; } = string.Empty;
+
     }
 }

@@ -23,7 +23,8 @@ namespace BeachGroupAPI.DAL
                 nom_email AS NomEmail,
                 senha AS Senha,
                 dat_criacao AS DatCriacao,
-                dat_alteracao AS DatAlteracao
+                dat_alteracao AS DatAlteracao,
+                flg_admin as FlgAdmin
             FROM usuarios
             WHERE nom_email = @Email
             LIMIT 1;

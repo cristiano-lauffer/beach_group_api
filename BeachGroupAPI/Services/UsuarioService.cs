@@ -41,7 +41,8 @@ public class UsuarioService
             Id = usuario.OidUsuario,
             Nome = usuario.NomUsuario,
             Email = usuario.NomEmail,
-            Token = token
+            Token = token,
+            Admin = usuario.FlgAdmin
         };
     }
 
