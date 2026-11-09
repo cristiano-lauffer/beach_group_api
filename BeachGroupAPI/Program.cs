@@ -60,6 +60,8 @@ builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<QuadraRepository>();
 builder.Services.AddScoped<QuadraService>();
+builder.Services.AddScoped<ReservaRepository>();
+builder.Services.AddScoped<ReservaService>();
 
 var app = builder.Build();
 
@@ -240,5 +242,55 @@ app.MapDelete("/api/quadras/{id:long}", async (long id, QuadraService quadraServ
     await quadraService.DeletarAsync(id);
     return Results.Content("Quadra deletada com sucesso.");
 });
+
+
+//------------------------------------
+// Reservas
+//------------------------------------
+
+// listar reservas
+app.MapGet("/api/reservas", async (
+    ReservaService reservaService) =>
+{
+    var reservas = await reservaService.ListarTodosAsync();
+
+    return Results.Ok(reservas);
+});
+
+// buscar reserva por id
+app.MapGet("/api/reservas/{id:long}", async (
+    long id,
+    ReservaService reservaService) =>
+{
+    var reserva = await reservaService.BuscarPorIdAsync(id);
+
+    if (reserva == null)
+    {
+        return Results.NotFound("Reserva não encontrada.");
+    }
+
+    return Results.Ok(reserva);
+});
+
+// criar reserva
+app.MapPost("/api/reservas", async (
+    CriarReservaDto dto,
+    ReservaService reservaService) =>
+{
+    var reserva = await reservaService.CriarAsync(dto);
+
+    if (reserva == null)
+    {
+        return Results.BadRequest(
+            "Usuário, quadra ou horário inválido."
+        );
+    }
+
+    return Results.Created(
+        $"/api/reservas/{reserva.OidReserva}",
+        reserva
+    );
+});
+
 
 app.Run();

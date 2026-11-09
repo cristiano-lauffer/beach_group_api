@@ -70,3 +70,25 @@ Content-Type: application/json
 DELETE {{base_url}}/api/quadras/2
 Authorization: Bearer {{login.response.body.$.token}}
 Accept: application/json
+
+### Listar Reservas
+
+GET {{base_url}}/api/reservas
+Accept: application/json
+
+### Buscar Reserva
+
+GET {{base_url}}/api/reservas/1
+Accept: application/json
+
+### Criar Reserva
+
+POST {{base_url}}/api/reservas
+Content-Type: application/json
+
+{
+    "oidUsuario": 1,
+    "oidQuadra": 1,
+    "datReserva": "2026-11-10",
+    "horInicio": 20
+}

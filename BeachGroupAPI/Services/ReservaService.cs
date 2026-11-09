@@ -1,30 +1,93 @@
-﻿using System.Data.Common;
+﻿using BeachGroupAPI.DAL;
+using BeachGroupAPI.DTO;
+using BeachGroupAPI.Model;
 
-public async Task<bool> ExisteReservaAsync(
-    long oidQuadra,
-    DateTime datReserva,
-    int horInicio)
+namespace BeachGroupAPI.Services;
+
+public class ReservaService
 {
-    const string sql = """
-    SELECT COUNT(*)
-    FROM reservas
-    WHERE oid_quadra = @OidQuadra
-      AND dat_reserva = @DatReserva
-      AND hor_inicio = @HorInicio
-    """;
+    private readonly ReservaRepository _reservaRepository;
+    private readonly UsuarioRepository _usuarioRepository;
+    private readonly QuadraRepository _quadraRepository;
 
-    await using var connection =
-        await _dataSource.OpenConnectionAsync();
+    public ReservaService(
+        ReservaRepository reservaRepository,
+        UsuarioRepository usuarioRepository,
+        QuadraRepository quadraRepository)
+    {
+        _reservaRepository = reservaRepository;
+        _usuarioRepository = usuarioRepository;
+        _quadraRepository = quadraRepository;
+    }
 
-    var quantidade =
-        await connection.ExecuteScalarAsync<int>(
-            sql,
-            new
-            {
-                OidQuadra = oidQuadra,
-                DatReserva = datReserva.Date,
-                HorInicio = horInicio
-            });
+    public async Task<Reserva?> CriarAsync(CriarReservaDto dto)
+    {
+        //valida horário
+        if (dto.HorInicio < 0 || dto.HorInicio > 23)
+        {
+            return null;
+        }
 
-    return quantidade > 0;
+        // valida usuário
+        var usuario =
+            await _usuarioRepository.BuscarPorIdAsync(dto.OidUsuario);
+
+        if (usuario == null)
+        {
+            return null;
+        }
+
+        // valida quadra
+        var quadra =
+            await _quadraRepository.BuscarPorOidAsync(dto.OidQuadra);
+
+        if (quadra == null)
+        {
+            return null;
+        }
+
+        // valida conflito de horário
+        var existeReserva =
+            await _reservaRepository.ExisteReservaAsync(
+                dto.OidQuadra,
+                dto.DatReserva,
+                dto.HorInicio
+            );
+
+        if (existeReserva)
+        {
+            return null;
+        }
+
+        var reserva = new Reserva
+        {
+            OidUsuario = dto.OidUsuario,
+            OidQuadra = dto.OidQuadra,
+
+            DatReserva = dto.DatReserva,
+            HorInicio = dto.HorInicio,
+
+            VlrReserva = quadra.VlrQuadra,
+
+            IndConfirmada = false,
+            IndPago = false,
+
+            VlrMultaCancelamento = 0,
+
+            DatCriacao = DateTime.Now,
+            DatAlteracao = DateTime.Now
+        };
+
+        return await _reservaRepository.CriarAsync(reserva);
+    }
+
+    public async Task<IEnumerable<Reserva>> ListarTodosAsync()
+    {
+        return await _reservaRepository.ListarTodosAsync();
+    }
+
+    public async Task<Reserva?> BuscarPorIdAsync(long id)
+    {
+        return await _reservaRepository.BuscarPorIdAsync(id);
+    }
 }
