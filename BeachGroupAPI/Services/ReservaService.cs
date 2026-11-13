@@ -23,7 +23,7 @@ public class ReservaService
     public async Task<Reserva?> CriarAsync(CriarReservaDto dto)
     {
         //valida horário
-        if (dto.HorInicio < 0 || dto.HorInicio > 23)
+        if (dto.HorInicio < 6 || dto.HorInicio > 23)
         {
             return null;
         }
@@ -89,5 +89,16 @@ public class ReservaService
     public async Task<Reserva?> BuscarPorIdAsync(long id)
     {
         return await _reservaRepository.BuscarPorIdAsync(id);
+    }
+
+    public async Task<bool> CancelarAsync(long id)
+    {
+        var reserva = await _reservaRepository.BuscarPorIdAsync(id);
+        if (reserva == null)
+        {
+            return false;
+        }
+        await _reservaRepository.DeletarAsync(id);
+        return true;
     }
 }

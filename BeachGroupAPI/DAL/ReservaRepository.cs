@@ -138,4 +138,21 @@ public class ReservaRepository
 
         return quantidade > 0;
     }
+
+    public async Task<bool> DeletarAsync(long id)
+    {
+        const string sql = """
+        DELETE FROM reservas
+        WHERE oid_reserva = @Id
+        """;
+        await using var connection =
+            await _dataSource.OpenConnectionAsync();
+        var linhasAfetadas =
+            await connection.ExecuteAsync(
+                sql,
+                new { Id = id }
+            );
+        return linhasAfetadas > 0;
+    }
+
 }
