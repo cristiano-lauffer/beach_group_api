@@ -292,5 +292,18 @@ app.MapPost("/api/reservas", async (
     );
 });
 
+// cancelar reserva
+app.MapDelete("/api/reservas/{id:long}", async (
+    long id,
+    ReservaService reservaService) =>
+{
+    var cancelado = await reservaService.CancelarAsync(id);
+    if (!cancelado)
+    {
+        return Results.NotFound("Reserva não encontrada ou já cancelada.");
+    }
+    return Results.Content("Reserva cancelada com sucesso.");
+});
+
 
 app.Run();
