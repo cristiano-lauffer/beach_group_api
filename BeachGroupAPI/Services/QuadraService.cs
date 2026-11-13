@@ -49,8 +49,24 @@ public class QuadraService
 
     public async Task<QuadraDto?> AtualizarAsync(long id, QuadraDto dto)
     {
-        throw new Exception("Não implementado");
+        // 1. Verifica se a quadra existe usando o método do repositório
+        var quadraExistente = await _quadraRepository.BuscarPorOidAsync(id);
+        if (quadraExistente == null)
+        {
+            return null; // Ou lance uma exceção, conforme preferir tratar na API
+        }
+
+        // 2. Executa a atualização no repositório
+        var atualizou = await _quadraRepository.AtualizarAsync(id, dto);
+        if (!atualizou)
+        {
+            return null;
+        }
+
+        // 3. Retorna a quadra atualizada buscando pelo ID
+        return await _quadraRepository.BuscarPorOidAsync(id);
     }
+
 
     public async Task<bool> DeletarAsync(long id)
     {

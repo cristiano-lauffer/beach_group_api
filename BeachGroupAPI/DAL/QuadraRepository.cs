@@ -119,9 +119,33 @@ namespace BeachGroupAPI.DAL
             return await this.BuscarPorOidAsync(id);
         }
 
-        public async Task<bool> AtualizarAsync(QuadraDto quadraDto)
+        public async Task<bool> AtualizarAsync(long oid, QuadraDto quadraDto)
         {
-            throw new Exception("Não implementado");
+            const string sql = """
+            UPDATE quadras
+            SET 
+                nom_quadra = @Nome,
+                hor_funcionamento_inicio = @HorFuncionamentoInicio,
+                hor_funcionamento_fim = @HorFuncionamentoFim,
+                vlr_quadra = @VlrQuadra,
+                dat_alteracao = current_timestamp()
+            WHERE oid_quadra = @Oid;
+            """;
+
+            await using var connection = await _dataSource.OpenConnectionAsync();
+            var rowsAffected = await connection.ExecuteAsync(
+                sql,
+                new
+                {
+                    Oid = oid,
+                    quadraDto.Nome,
+                    quadraDto.HorFuncionamentoInicio,
+                    quadraDto.HorFuncionamentoFim,
+                    quadraDto.VlrQuadra
+                }
+            );
+
+            return rowsAffected > 0;
         }
 
         public async Task<bool> DeletarAsync(long id)
